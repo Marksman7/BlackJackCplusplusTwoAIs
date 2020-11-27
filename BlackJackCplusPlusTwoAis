@@ -1,0 +1,254 @@
+#include <iostream>
+#include <string>
+#include <cstdlib>
+#include <time.h>
+
+
+
+//format
+//-round
+//kyle's hand
+//Dealer's hand also if 0 means Kyle busted
+//who won
+
+//still get confused with 2d arrays sometimes {rows left and right}[colums up and down]
+//no jokers because I grew up knowing that blackjack doesn't not include jokeres
+//I am freeballing the fules alittle
+
+int main()
+{
+    srand((unsigned int)time(NULL));
+
+    bool GoForIt = false;
+
+    int Deck[4][13] = { {0,0,0,0,0,0,0,0,0,0,0,0,0}, {0,0,0,0,0,0,0,0,0,0,0,0,0}, {0,0,0,0,0,0,0,0,0,0,0,0,0}, {0,0,0,0,0,0,0,0,0,0,0,0,0} };
+
+    int Hundred = 1; //tracks on hundred play throughs
+
+    int KyleWin = 0;
+
+    int DealWin = 0;
+
+    bool Next = false;
+
+    int Pick = 0;
+
+    int Type = 0;
+
+    int number = 0;
+
+    int Ace = 0;
+
+    int Kyle = 0; //Tracks ai Kyle
+
+    int Dealer = 0; //Keeps track of dearler
+
+    int Maybe = 0;
+
+
+    for (int h = 0; h < 100; h++)
+    {
+
+        Maybe = 0;
+
+        Kyle = 0;
+
+        Dealer = 0;
+
+        Ace = 0;
+
+
+        for (int K = 0; K < 10; K++)
+        {
+            //resets deck every time
+            for (int i = 0; i < 4; i++)
+            {
+                for (int j = 0; j < 13; j++)
+                {
+                    Deck[i][j] = 0;
+                }
+            }
+
+            while (Next == false)
+            {
+                Type = rand() % 4;
+
+                number = rand() % 13;
+
+                if (Deck[Type][number] == 0)
+                {
+                    Next = true;
+                    Deck[Type][number] = 1;
+
+                }
+            }
+
+            Next = false;
+
+            if (number >= 10)
+            {
+                Kyle = Kyle + 10;
+            }
+            else if (number == 1)
+            {
+                Ace = 1;
+            }
+            else
+            {
+                Kyle = Kyle + number;
+            }
+
+            Pick = rand() % 4;
+
+            if (Ace >= 1)
+            {
+                if (Ace > 1)
+                {
+                    if ((Kyle + 11 + (Ace - 1)) == 21)
+                    {
+                        Kyle = Kyle + 11 + (Ace - 1);
+                        K = 20;
+                    }
+                    else if ((Kyle + Ace) == 21)
+                    {
+                        Kyle = Kyle + Ace;
+                        K = 20;
+                    }
+                    else if ((Kyle + Ace) >= (15 + Pick))
+                    {
+                        Kyle = Kyle + Ace;
+                        K = 20;
+                    }
+                }
+                else if ((Kyle + 11) == 21)
+                {
+                    Kyle = Kyle + 11;
+                    K = 20;
+                }
+                else if ((Kyle + 11) >= (15 + Pick))
+                {
+                    Kyle = Kyle + 11;
+                    K = 20;
+                }
+                else if (Kyle + 1 == 21)
+                {
+                    Kyle = Kyle + 1;
+                    K = 20;
+
+                }
+                else if (Kyle + 1 >= (15 + Pick))
+                {
+                    Kyle = Kyle + 1;
+                    K = 20;
+                }
+            }
+            else if (Kyle >= (15 + Pick))
+            {
+                K = 20;
+            }
+            
+
+        }
+        std::cout << Kyle << std::endl;
+
+        Ace = 0;
+
+        while ((Dealer < Kyle && !(Dealer >= 21)) && Kyle < 21)
+        {
+
+            while (Next == false)
+            {
+                Type = rand() % 4;
+
+                number = rand() % 13;
+
+                if (Deck[Type][number] == 0)
+                {
+                    Next = true;
+                    Deck[Type][number] = 2;
+
+                }
+            }
+
+            Next = false;
+
+            if (number >= 10)
+            {
+                Dealer = Dealer + 10;
+            }
+            else if (number == 1)
+            {
+                Ace = Ace + 1;
+            }
+            else
+            {
+                Dealer = Dealer + number;
+            }
+
+            Pick = rand() % 4;
+
+            if (Ace >= 1)
+            {
+
+                if (((Dealer + Ace) >= Kyle && Dealer <= 21) || Kyle > 21)
+                {
+                    Dealer = Dealer + Ace;
+                }
+                else if ((Dealer + 11 + (Ace - 1)) >= Kyle && Dealer <= 21)
+                {
+                    Dealer = Dealer + 11 + (Ace - 1);
+                }
+
+            }
+            else if (Ace == 1)
+            {
+                if (((Dealer + 1) >= Kyle && Dealer <= 21) || Kyle > 21)
+                {
+                    Dealer = Dealer + 1;
+                }
+                else if ((Dealer + 11) >= Kyle && Dealer <= 21)
+                {
+                    Dealer = Dealer + 11 + (Ace - 1);
+                }
+            }
+
+        }
+        std::cout << Dealer << std::endl;
+
+        std::cout << Hundred << std::endl;
+        if (Kyle > 21)
+        {
+            DealWin = DealWin + 1;
+            std::cout << "Dealer won " << std::endl;
+        }
+        else if (Dealer > 21)
+        {
+            KyleWin = KyleWin + 1;
+            std::cout << "Kyle won " << std::endl;
+            //std::cout << "Kyle won with " + Kyle;
+            //std::cout << " to Dealer's " + Dealer;
+            //std::cout << "\n";
+        }
+        else
+        {
+            DealWin = DealWin + 1;
+            std::cout << "Dealer won " << std::endl;
+            //std::cout << "Dealer won with " + Dealer;
+            //std::cout << " to Kyle's " + Kyle;
+            //std::cout << "\n";
+        }
+        Hundred = Hundred + 1;
+    }
+
+    if (DealWin > KyleWin)
+    {
+
+        std::cout << "out of 100 vs the Kyle, Dealer won " << std::endl;
+        std::cout << DealWin << std::endl;
+    }
+    else
+    {
+        std::cout << "out of 100 vs the Dealer, Kyle won " << std::endl;
+        std::cout << KyleWin << std::endl;
+    }
+}
